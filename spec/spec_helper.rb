@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'bundler/git_slim'
+require 'bundler_git_slim'
 require 'tmpdir'
 require 'fileutils'
 

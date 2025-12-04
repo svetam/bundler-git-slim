@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require_relative 'lib/bundler/git_slim'
+require_relative 'lib/bundler_git_slim'
 
 Gem::Specification.new do |spec|
   spec.name          = 'bundler-git-slim'
-  spec.version       = Bundler::GitSlim::VERSION
-  spec.authors       = ['Your Name']
-  spec.email         = ['you@example.com']
+  spec.version       = BundlerGitSlim::VERSION
+  spec.authors       = ['Sveta Markovic']
+  spec.email         = ['svetam.sd@gmail.com']
 
   spec.summary       = 'Bundler plugin that slims git-installed gems down to spec.files.'
   spec.description   = spec.summary
-  spec.homepage      = 'https://github.com/yourname/bundler-git-slim'
+  spec.homepage      = 'https://github.com/svetam/bundler-git-slim'
   spec.license       = 'MIT'
 
   spec.required_ruby_version = '>= 2.7'

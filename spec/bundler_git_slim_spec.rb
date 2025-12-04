@@ -2,10 +2,10 @@
 
 require 'spec_helper'
 
-RSpec.describe Bundler::GitSlim do
+RSpec.describe BundlerGitSlim do
   describe '::VERSION' do
     it 'has a version number' do
-      expect(Bundler::GitSlim::VERSION).to eq('0.1.0')
+      expect(BundlerGitSlim::VERSION).to eq('0.1.0')
     end
   end
 
@@ -30,7 +30,7 @@ RSpec.describe Bundler::GitSlim do
       create_file('lib/extra.rb', '# extra')
       create_file('test/test_main.rb', '# test')
 
-      Bundler::GitSlim.prune(tmpdir, ['lib/main.rb'])
+      BundlerGitSlim.prune(tmpdir, ['lib/main.rb'])
 
       expect(exists?('lib/main.rb')).to be true
       expect(exists?('lib/extra.rb')).to be false
@@ -41,7 +41,7 @@ RSpec.describe Bundler::GitSlim do
       create_file('lib/main.rb', '# main')
       create_file('test/test_main.rb', '# test')
 
-      Bundler::GitSlim.prune(tmpdir, ['lib/main.rb'])
+      BundlerGitSlim.prune(tmpdir, ['lib/main.rb'])
 
       expect(exists?('lib')).to be true
       expect(exists?('test')).to be false
@@ -50,7 +50,7 @@ RSpec.describe Bundler::GitSlim do
     it 'keeps ancestor directories of allowed files' do
       create_file('lib/foo/bar/baz.rb', '# baz')
 
-      Bundler::GitSlim.prune(tmpdir, ['lib/foo/bar/baz.rb'])
+      BundlerGitSlim.prune(tmpdir, ['lib/foo/bar/baz.rb'])
 
       expect(exists?('lib')).to be true
       expect(exists?('lib/foo')).to be true
@@ -63,7 +63,7 @@ RSpec.describe Bundler::GitSlim do
       create_file('lib/main.rb', '# main')
       create_file('extra.txt', 'extra')
 
-      Bundler::GitSlim.prune(tmpdir, ['lib/main.rb'])
+      BundlerGitSlim.prune(tmpdir, ['lib/main.rb'])
 
       expect(exists?('mygem.gemspec')).to be true
       expect(exists?('lib/main.rb')).to be true
@@ -75,7 +75,7 @@ RSpec.describe Bundler::GitSlim do
       create_file('.config/settings.yml', 'settings')
       create_file('lib/main.rb', '# main')
 
-      Bundler::GitSlim.prune(tmpdir, ['lib/main.rb'])
+      BundlerGitSlim.prune(tmpdir, ['lib/main.rb'])
 
       expect(exists?('.hidden')).to be false
       expect(exists?('.config')).to be false
@@ -85,7 +85,7 @@ RSpec.describe Bundler::GitSlim do
     it 'removes everything except gemspecs when allowed_files is empty' do
       create_file('lib/main.rb', '# main')
 
-      Bundler::GitSlim.prune(tmpdir, [])
+      BundlerGitSlim.prune(tmpdir, [])
 
       expect(exists?('lib/main.rb')).to be false
     end
@@ -95,7 +95,7 @@ RSpec.describe Bundler::GitSlim do
       link_path = File.join(tmpdir, 'link_to_main.rb')
       File.symlink(File.join(tmpdir, 'lib/main.rb'), link_path)
 
-      Bundler::GitSlim.prune(tmpdir, ['lib/main.rb'])
+      BundlerGitSlim.prune(tmpdir, ['lib/main.rb'])
 
       expect(exists?('lib/main.rb')).to be true
       expect(File.symlink?(link_path)).to be false
@@ -107,7 +107,7 @@ RSpec.describe Bundler::GitSlim do
       link_path = File.join(tmpdir, 'vendor_link')
       File.symlink(File.join(tmpdir, 'vendor'), link_path)
 
-      Bundler::GitSlim.prune(tmpdir, ['lib/main.rb'])
+      BundlerGitSlim.prune(tmpdir, ['lib/main.rb'])
 
       expect(exists?('lib/main.rb')).to be true
       expect(File.symlink?(link_path)).to be false
@@ -118,7 +118,7 @@ RSpec.describe Bundler::GitSlim do
       create_file('a/b/c/d/e/f.rb', '# deep')
       create_file('a/b/x/y.rb', '# another')
 
-      Bundler::GitSlim.prune(tmpdir, ['a/b/c/d/e/f.rb'])
+      BundlerGitSlim.prune(tmpdir, ['a/b/c/d/e/f.rb'])
 
       expect(exists?('a/b/c/d/e/f.rb')).to be true
       expect(exists?('a/b/x')).to be false
@@ -130,7 +130,7 @@ RSpec.describe Bundler::GitSlim do
       create_file('bin/exec', '# exec')
       create_file('test/test.rb', '# test')
 
-      Bundler::GitSlim.prune(tmpdir, ['lib/a.rb', 'bin/exec'])
+      BundlerGitSlim.prune(tmpdir, ['lib/a.rb', 'bin/exec'])
 
       expect(exists?('lib/a.rb')).to be true
       expect(exists?('lib/b.rb')).to be false
@@ -138,26 +138,26 @@ RSpec.describe Bundler::GitSlim do
       expect(exists?('test')).to be false
     end
 
-    it 'returns count of removed files and directories' do
+    it 'returns count of removed files and bytes' do
       create_file('lib/main.rb', '# main')
       create_file('lib/extra.rb', '# extra')
       create_file('test/a.rb', '# a')
       create_file('test/b.rb', '# b')
 
-      result = Bundler::GitSlim.prune(tmpdir, ['lib/main.rb'])
+      result = BundlerGitSlim.prune(tmpdir, ['lib/main.rb'])
 
       expect(result).to be_a(Hash)
       expect(result[:files]).to eq(3) # extra.rb, a.rb, b.rb
-      expect(result[:dirs]).to eq(1)  # test/
+      expect(result[:bytes]).to be > 0
     end
 
     it 'returns zero counts when nothing to remove' do
       create_file('lib/main.rb', '# main')
 
-      result = Bundler::GitSlim.prune(tmpdir, ['lib/main.rb'])
+      result = BundlerGitSlim.prune(tmpdir, ['lib/main.rb'])
 
       expect(result[:files]).to eq(0)
-      expect(result[:dirs]).to eq(0)
+      expect(result[:bytes]).to eq(0)
     end
   end
 
@@ -168,7 +168,7 @@ RSpec.describe Bundler::GitSlim do
 
     it 'includes all ancestor paths' do
       root = Pathname(tmpdir)
-      keep = Bundler::GitSlim.build_keep_set(root, ['lib/foo/bar.rb'])
+      keep = BundlerGitSlim.build_keep_set(root, ['lib/foo/bar.rb'])
 
       expect(keep).to include(root.join('lib/foo/bar.rb').to_s)
       expect(keep).to include(root.join('lib/foo').to_s)
@@ -181,7 +181,7 @@ RSpec.describe Bundler::GitSlim do
       gemspec_path = File.join(tmpdir, 'test.gemspec')
       File.write(gemspec_path, '# gemspec')
 
-      keep = Bundler::GitSlim.build_keep_set(root, ['lib/main.rb'])
+      keep = BundlerGitSlim.build_keep_set(root, ['lib/main.rb'])
 
       expect(keep).to include(gemspec_path)
     end
@@ -201,7 +201,7 @@ RSpec.describe Bundler::GitSlim do
     it 'returns paths sorted by length descending (children before parents)' do
       create_file('a/b/c.rb', '')
 
-      paths = Bundler::GitSlim.all_paths(Pathname(tmpdir))
+      paths = BundlerGitSlim.all_paths(Pathname(tmpdir))
 
       c_idx = paths.index { |p| p.end_with?('c.rb') }
       b_idx = paths.index { |p| p.end_with?('/b') }
@@ -214,7 +214,7 @@ RSpec.describe Bundler::GitSlim do
     it 'excludes . and .. entries' do
       create_file('lib/main.rb', '')
 
-      paths = Bundler::GitSlim.all_paths(Pathname(tmpdir))
+      paths = BundlerGitSlim.all_paths(Pathname(tmpdir))
 
       expect(paths.none? { |p| File.basename(p) == '.' }).to be true
       expect(paths.none? { |p| File.basename(p) == '..' }).to be true
@@ -224,7 +224,7 @@ RSpec.describe Bundler::GitSlim do
       create_file('.hidden', '')
       create_file('.config/file', '')
 
-      paths = Bundler::GitSlim.all_paths(Pathname(tmpdir))
+      paths = BundlerGitSlim.all_paths(Pathname(tmpdir))
 
       expect(paths.any? { |p| p.end_with?('.hidden') }).to be true
       expect(paths.any? { |p| p.end_with?('.config') }).to be true
