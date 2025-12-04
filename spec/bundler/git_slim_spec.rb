@@ -141,6 +141,28 @@ RSpec.describe Bundler::GitSlim do
       expect(exists?("bin/exec")).to be true
       expect(exists?("test")).to be false
     end
+
+    it "returns count of removed files and directories" do
+      create_file("lib/main.rb", "# main")
+      create_file("lib/extra.rb", "# extra")
+      create_file("test/a.rb", "# a")
+      create_file("test/b.rb", "# b")
+
+      result = Bundler::GitSlim.prune(tmpdir, ["lib/main.rb"])
+
+      expect(result).to be_a(Hash)
+      expect(result[:files]).to eq(3) # extra.rb, a.rb, b.rb
+      expect(result[:dirs]).to eq(1)  # test/
+    end
+
+    it "returns zero counts when nothing to remove" do
+      create_file("lib/main.rb", "# main")
+
+      result = Bundler::GitSlim.prune(tmpdir, ["lib/main.rb"])
+
+      expect(result[:files]).to eq(0)
+      expect(result[:dirs]).to eq(0)
+    end
   end
 
   describe ".build_keep_set" do

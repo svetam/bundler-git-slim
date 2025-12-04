@@ -32,6 +32,16 @@ Or install globally:
 bundle plugin install bundler-git-slim
 ```
 
+## Slim already-installed gems
+
+If you have git gems already installed, run:
+
+```bash
+bundle git-slim
+```
+
+This will prune all git-sourced gems in your current bundle.
+
 ## Safety
 
 - Scope limited to `Bundler::Source::Git`
