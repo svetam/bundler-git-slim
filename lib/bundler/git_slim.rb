@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require "fileutils"
-require "set"
-require "pathname"
+require 'fileutils'
+require 'set'
+require 'pathname'
 
 module Bundler
   module GitSlim
-    VERSION = "0.1.0"
+    VERSION = '0.1.0'
 
     class << self
       def prune(root, allowed_files)
@@ -43,13 +43,13 @@ module Bundler
           path.ascend { |p| keep << p.to_s }
         end
 
-        Dir.glob(root.join("*.gemspec")).each { |gs| keep << File.expand_path(gs) }
+        Dir.glob(root.join('*.gemspec')).each { |gs| keep << File.expand_path(gs) }
 
         keep
       end
 
       def all_paths(root)
-        Dir.glob(root.join("**/*"), File::FNM_DOTMATCH)
+        Dir.glob(root.join('**/*'), File::FNM_DOTMATCH)
            .map { |p| File.expand_path(p) }
            .reject { |p| %w[. ..].include?(File.basename(p)) }
            .sort_by(&:length)
@@ -74,48 +74,57 @@ module Bundler
 end
 
 if defined?(Bundler::Plugin)
-  Bundler::Plugin.add_hook("after-install") do |spec|
+  Bundler::Plugin.add_hook('after-install') do |spec|
     result = Bundler::GitSlim.prune_spec(spec)
     next unless result
 
     total = result[:files] + result[:dirs]
-    if total > 0
-      Bundler.ui.info "  git-slim: removed #{result[:files]} files, #{result[:dirs]} dirs"
-    end
+    Bundler.ui.info "  git-slim: removed #{result[:files]} files, #{result[:dirs]} dirs" if total.positive?
   end
 
-  class Bundler::GitSlim::Command < Bundler::Plugin::API
-    command "git-slim"
+  module Bundler
+    module GitSlim
+      class Command < Bundler::Plugin::API
+        command 'git-slim'
 
-    def exec(_command, _args)
-      Bundler.ui.info "Slimming installed git gems..."
+        def exec(_command, _args)
+          Bundler.ui.info 'Slimming installed git gems...'
 
-      specs = Bundler.load.specs.select { |s| s.source.is_a?(Bundler::Source::Git) }
+          specs = git_specs
+          return Bundler.ui.info('No git-sourced gems found.') if specs.empty?
 
-      if specs.empty?
-        Bundler.ui.info "No git-sourced gems found."
-        return
-      end
+          totals = prune_all(specs)
+          report_totals(totals)
+        end
 
-      total_files = 0
-      total_dirs = 0
+        private
 
-      specs.each do |spec|
-        result = Bundler::GitSlim.prune_spec(spec)
-        next unless result
+        def git_specs
+          Bundler.load.specs.select { |s| s.source.is_a?(Bundler::Source::Git) }
+        end
 
-        removed = result[:files] + result[:dirs]
-        next if removed.zero?
+        def prune_all(specs)
+          totals = { files: 0, dirs: 0 }
 
-        total_files += result[:files]
-        total_dirs += result[:dirs]
-        Bundler.ui.info "  #{spec.name}: removed #{result[:files]} files, #{result[:dirs]} dirs"
-      end
+          specs.each do |spec|
+            result = Bundler::GitSlim.prune_spec(spec)
+            next unless result && (result[:files] + result[:dirs]).positive?
 
-      if total_files.zero? && total_dirs.zero?
-        Bundler.ui.info "All git gems already slim."
-      else
-        Bundler.ui.info "Done. Removed #{total_files} files, #{total_dirs} dirs total."
+            totals[:files] += result[:files]
+            totals[:dirs] += result[:dirs]
+            Bundler.ui.info "  #{spec.name}: removed #{result[:files]} files, #{result[:dirs]} dirs"
+          end
+
+          totals
+        end
+
+        def report_totals(totals)
+          if totals[:files].zero? && totals[:dirs].zero?
+            Bundler.ui.info 'All git gems already slim.'
+          else
+            Bundler.ui.info "Done. Removed #{totals[:files]} files, #{totals[:dirs]} dirs total."
+          end
+        end
       end
     end
   end
