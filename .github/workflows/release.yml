@@ -43,9 +43,15 @@ jobs:
             echo "Tag v${{ steps.version.outputs.version }} does not exist, proceeding with release"
           fi
 
-      - name: Push to RubyGems
+      - name: Configure RubyGems credentials
         if: steps.check_tag.outputs.exists == 'false'
-        uses: rubygems/release-gem@v1
+        uses: rubygems/configure-rubygems-credentials@v1
+
+      - name: Build and push to RubyGems
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+          gem build bundler-git-slim.gemspec
+          gem push bundler-git-slim-*.gem
 
       - name: Create Git tag
         if: steps.check_tag.outputs.exists == 'false'
