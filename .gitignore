@@ -1,3 +1,8 @@
+# Exclude all hidden directories
+.*/
+# But allow GitHub Actions
+!.github/
+
 *.gem
 *.rbc
 /.config

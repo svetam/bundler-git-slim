@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'bundler-git-slim'
   spec.version       = BundlerGitSlim::VERSION
   spec.authors       = ['Sveta Markovic']
-  spec.email         = ['svetam.sd@gmail.com']
+  spec.email         = ['svetislav.markovic@pm.me']
 
   spec.summary       = 'Bundler plugin that slims git-installed gems down to spec.files.'
   spec.description   = spec.summary
