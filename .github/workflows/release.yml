@@ -45,7 +45,7 @@ jobs:
 
       - name: Configure RubyGems credentials
         if: steps.check_tag.outputs.exists == 'false'
-        uses: rubygems/configure-rubygems-credentials@v1
+        uses: rubygems/configure-rubygems-credentials@v1.0.0
 
       - name: Build and push to RubyGems
         if: steps.check_tag.outputs.exists == 'false'
