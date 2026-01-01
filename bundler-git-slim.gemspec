@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Sveta Markovic']
   spec.email         = ['svetislav.markovic@pm.me']
 
-  spec.summary       = 'Bundler plugin that slims git-installed gems down to spec files.'
+  spec.summary       = 'Bundler plugin that slims git-installed gems down to spec.files.'
   spec.description   = spec.summary
   spec.homepage      = 'https://github.com/svetam/bundler-git-slim'
   spec.license       = 'MIT'
