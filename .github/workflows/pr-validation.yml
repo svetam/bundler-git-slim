@@ -1,0 +1,40 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, edited, synchronize]
+
+jobs:
+  validate-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+
+      - name: Extract version from gemspec
+        id: gemspec
+        run: |
+          VERSION=$(ruby -e "require_relative 'lib/bundler_git_slim'; puts BundlerGitSlim::VERSION")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Gemspec version: $VERSION"
+
+      - name: Validate PR title contains version
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          GEMSPEC_VERSION: ${{ steps.gemspec.outputs.version }}
+        run: |
+          echo "PR Title: $PR_TITLE"
+          echo "Expected version: $GEMSPEC_VERSION"
+          
+          if [[ "$PR_TITLE" != *"$GEMSPEC_VERSION"* ]]; then
+            echo "::error::PR title must contain version '$GEMSPEC_VERSION'"
+            echo "Example: 'Release v$GEMSPEC_VERSION' or 'v$GEMSPEC_VERSION - Feature description'"
+            exit 1
+          fi
+          
+          echo "✓ PR title contains version $GEMSPEC_VERSION"
