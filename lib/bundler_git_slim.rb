@@ -5,7 +5,7 @@ require 'set'
 require 'pathname'
 
 module BundlerGitSlim
-  VERSION = '0.1.0'
+  VERSION = '0.1.1'
   UNITS = %w[B KB MB GB].freeze
 
   class << self
