@@ -1,5 +1,8 @@
 # bundler-git-slim
 
+[![CI](https://github.com/svetam/bundler-git-slim/actions/workflows/ci.yml/badge.svg)](https://github.com/svetam/bundler-git-slim/actions/workflows/ci.yml)
+[![Gem Version](https://badge.fury.io/rb/bundler-git-slim.svg)](https://rubygems.org/gems/bundler-git-slim)
+
 Bundler plugin that slims git-installed gems down to the files listed in `spec.files`, reducing disk usage and cache size.
 
 ## Features
@@ -48,6 +51,27 @@ This will prune all git-sourced gems in your current bundle.
 - Only operates when `spec.full_gem_path` is inside `Bundler.bundle_path`
 - If `spec.files` is empty or nil, does nothing
 - Always preserves `*.gemspec` files
+
+## Requirements
+
+- Ruby >= 2.7
+- Bundler >= 2.0
+
+## Development
+
+```bash
+bundle install
+bundle exec rake spec
+bundle exec rubocop
+```
+
+## Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b feature/my-feature`)
+3. Commit your changes (`git commit -am 'Add my feature'`)
+4. Push to the branch (`git push origin feature/my-feature`)
+5. Create a Pull Request
 
 ## License
 
