@@ -75,7 +75,7 @@ This will prune all git-sourced gems in your current bundle.
 
 ## Requirements
 
-- Ruby >= 3.0
+- Ruby >= 3.2
 - Bundler >= 2.0
 
 ## Development
