@@ -5,6 +5,27 @@
 
 Bundler plugin that slims git-installed gems down to the files listed in `spec.files`, reducing disk usage and cache size.
 
+## Why use this?
+
+When you install gems via `git:` in your Gemfile, Bundler clones the entire repository - including specs, docs, fixtures, CI configs, and other development files that aren't part of the production gem. This bloats your bundle directory and increases Docker image sizes, especially with private gems that have large test suites or documentation.
+
+This plugin automatically removes everything except the files declared in `spec.files`, giving you the same lean footprint as a gem installed from RubyGems.
+
+**Use this if you:**
+- Install private gems from Git repositories
+- Want smaller Docker images and faster deployments
+- Have git gems with large test suites, docs, or assets not needed in production
+
+## Example output
+
+During `bundle install`, the plugin reports what was removed:
+
+```
+Slimmed my_private_gem 1.2.0 (847 files, 12.3 MB)
+```
+
+The output shows the gem name, version, number of files removed, and total size freed.
+
 ## Features
 
 - Only affects gems installed from `git "..."` sources
