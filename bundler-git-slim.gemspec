@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.files         = Dir['lib/**/*.rb', 'plugins.rb', 'README.md', 'LICENSE', 'bundler-git-slim.gemspec']
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'bundler', '>= 2.0'
+  spec.add_dependency 'bundler', '>= 2.0', '< 5'
 
   spec.metadata = {
     'homepage_uri' => spec.homepage,

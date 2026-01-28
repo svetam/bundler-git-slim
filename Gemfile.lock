@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     bundler-git-slim (0.1.1)
-      bundler (>= 2.0)
+      bundler (>= 2.0, < 5)
 
 GEM
   remote: https://rubygems.org/
