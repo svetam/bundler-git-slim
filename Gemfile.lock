@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    bundler-git-slim (0.1.1)
+    bundler-git-slim (1.0.0)
       bundler (>= 2.0, < 5)
 
 GEM

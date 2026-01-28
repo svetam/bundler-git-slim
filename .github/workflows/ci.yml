@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version: ['3.2', '3.3', '3.4']
+        ruby-version: ['3.2', '3.3', '3.4', '4.0']
         bundler-version: ['2', '4']
 
     steps:
@@ -24,6 +24,8 @@ jobs:
           ruby-version: ${{ matrix.ruby-version }}
           bundler: ${{ matrix.bundler-version }}
           bundler-cache: true
+        env:
+          BUNDLE_UPDATE_BUNDLED_WITH: true
 
       - name: Run tests
         run: bundle exec rake spec
