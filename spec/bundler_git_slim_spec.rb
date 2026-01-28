@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe BundlerGitSlim do
   describe '::VERSION' do
     it 'has a version number' do
-      expect(BundlerGitSlim::VERSION).to start_with('0.1')
+      expect(BundlerGitSlim::VERSION).to start_with('1.0')
     end
   end
 
